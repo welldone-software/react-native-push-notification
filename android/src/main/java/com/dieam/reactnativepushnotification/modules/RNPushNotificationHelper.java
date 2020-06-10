@@ -474,6 +474,16 @@ public class RNPushNotificationHelper {
                 }
             }
 
+            // get expired time from message data (if existed).
+            String expiredTimeString = bundle.getString("expired_time", "0");
+            long expiredTime = Long.parseLong(expiredTimeString);
+            long currentTimeMillis = System.currentTimeMillis();
+            if (expiredTime == 0) {
+                expiredTime = currentTimeMillis + 10 * 1000;
+            }
+            long delayMillisToExpiredTime = Math.max(expiredTime - currentTimeMillis, 0);
+            notification.setTimeoutAfter(delayMillisToExpiredTime);
+
             // Remove the notification from the shared preferences once it has been shown
             // to avoid showing the notification again when the phone is rebooted. If the
             // notification is not removed, then every time the phone is rebooted, we will
