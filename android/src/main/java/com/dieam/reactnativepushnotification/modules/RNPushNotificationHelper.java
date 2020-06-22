@@ -28,6 +28,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.text.HtmlCompat;
 
+import com.dieam.reactnativepushnotification.R;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -43,7 +44,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotificationAttributes.fromJson;
@@ -192,10 +192,6 @@ public class RNPushNotificationHelper {
             String channel_id = NOTIFICATION_CHANNEL_ID;
 
             String title = bundle.getString("title");
-            if (title == null) {
-                ApplicationInfo appInfo = context.getApplicationInfo();
-                title = context.getPackageManager().getApplicationLabel(appInfo).toString();
-            }
 
             int priority = NotificationCompat.PRIORITY_HIGH;
             final String priorityString = bundle.getString("priority");
@@ -431,9 +427,10 @@ public class RNPushNotificationHelper {
             notification.setChannelId(channel_id);
             notification.setContentIntent(pendingIntent);
 
+            String actionsJson = bundle.getString("actions", "[]");
             JSONArray actionsArray = null;
             try {
-                actionsArray = bundle.getString("actions") != null ? new JSONArray(bundle.getString("actions")) : null;
+                actionsArray = new JSONArray(actionsJson);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Exception while converting actions to JSON object.", e);
             }
@@ -473,16 +470,6 @@ public class RNPushNotificationHelper {
                     notification.addAction(icon, actionStyle, pendingActionIntent);
                 }
             }
-
-            // get expired time from message data (if existed).
-            String expiredTimeString = bundle.getString("expired_time", "0");
-            long expiredTime = Long.parseLong(expiredTimeString);
-            long currentTimeMillis = System.currentTimeMillis();
-            if (expiredTime == 0) {
-                expiredTime = currentTimeMillis + 10 * 1000;
-            }
-            long delayMillisToExpiredTime = Math.max(expiredTime - currentTimeMillis, 0);
-            notification.setTimeoutAfter(delayMillisToExpiredTime);
 
             // Remove the notification from the shared preferences once it has been shown
             // to avoid showing the notification again when the phone is rebooted. If the

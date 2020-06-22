@@ -1,5 +1,6 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import com.dieam.reactnativepushnotification.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -56,20 +57,24 @@ public class RNReceivedMessageHandler {
         if (notificationData.containsKey("twi_body")) {
             bundle.putString("message", notificationData.get("twi_body"));
         }
-        JSONObject data = getPushData(notificationData.get("data"));
+        JSONObject data = getPushData(notificationData);
 
         if (data != null) {
+            mFirebaseMessagingService.getString(R.string.fcm_default_title);
             if (!bundle.containsKey("message")) {
-                bundle.putString("message", data.optString("alert", null));
+                bundle.putString("message", data.optString("alert", data.optString(mFirebaseMessagingService.getString(R.string.fcm_default_message_key), null)));
             }
             if (!bundle.containsKey("title")) {
-                bundle.putString("title", data.optString("title", null));
+                bundle.putString("title", data.optString("title", mFirebaseMessagingService.getString(R.string.fcm_default_title)));
             }
             if (!bundle.containsKey("sound")) {
                 bundle.putString("soundName", data.optString("sound", null));
             }
             if (!bundle.containsKey("color")) {
                 bundle.putString("color", data.optString("color", null));
+            }
+            if (!bundle.containsKey("actions")) {
+                bundle.putString("actions", data.optString("actions", mFirebaseMessagingService.getString(R.string.fcm_actions_json)));
             }
 
             final int badge = data.optInt("badge", -1);
@@ -114,9 +119,13 @@ public class RNReceivedMessageHandler {
         });
     }
 
-    private JSONObject getPushData(String dataString) {
+    private JSONObject getPushData(Map<String, String> data) {
         try {
-            return new JSONObject(dataString);
+            JSONObject json = new JSONObject();
+            for (Map.Entry<String, String> entry : data.entrySet()) {
+                json.put(entry.getKey(), entry.getValue());
+            }
+            return json;
         } catch (Exception e) {
             return null;
         }

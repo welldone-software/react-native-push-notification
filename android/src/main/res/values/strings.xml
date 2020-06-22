@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fcm_default_title">Title</string>
+    <string name="fcm_default_message_key">message</string>
+    <string name="fcm_actions_json">[]</string>
+</resources>
