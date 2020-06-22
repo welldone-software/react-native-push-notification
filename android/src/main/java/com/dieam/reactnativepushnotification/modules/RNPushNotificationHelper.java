@@ -322,7 +322,7 @@ public class RNPushNotificationHelper {
             if (largeIcon != null) {
                 largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
             } else {
-                largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
+                largeIconResId = res.getIdentifier(res.getString("fcm_icon_src");, "mipmap", packageName);
             }
 
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);

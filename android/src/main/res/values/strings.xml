@@ -3,4 +3,5 @@
     <string name="fcm_default_title">Title</string>
     <string name="fcm_default_message_key">message</string>
     <string name="fcm_actions_json">[]</string>
+    <string name="fcm_icon_src"></string>
 </resources>
