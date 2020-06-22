@@ -60,7 +60,6 @@ public class RNReceivedMessageHandler {
         JSONObject data = getPushData(notificationData);
 
         if (data != null) {
-            mFirebaseMessagingService.getString(R.string.fcm_default_title);
             if (!bundle.containsKey("message")) {
                 bundle.putString("message", data.optString("alert", data.optString(mFirebaseMessagingService.getString(R.string.fcm_default_message_key), null)));
             }
